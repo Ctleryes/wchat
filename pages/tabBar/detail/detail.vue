@@ -1,7 +1,7 @@
 <template>
 	<view class="page">
 		<input class="search" type="text" v-model="value" @input="handleInput" />
-
+     
 		<view @tap="handlePlay(item)" class="lie" v-for="item in songs" :key="item.id">
 			<view class="">
 				{{item.name}}
