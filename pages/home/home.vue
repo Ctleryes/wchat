@@ -1,18 +1,19 @@
 <template>
 	<view class="app">
-
+		<view class="nav" :style="{opacity:opacity }">
+			<text class="icon back">&#xe6ed;</text>
+			<text class="title">温成说</text>
+		</view>
 		<view class="header">
-			<view class="nav">
-				<view class="back">
-					返回
-				</view>
-			</view>
-			<image class="img" :src="header_image" mode="" />
+
+			<image @tap="handleChangeCaver" class="img" :src="header_image" mode="scaleToFill" />
+
 			<text class="nickname">{{user.userInfo&&user.userInfo.nickName}}</text>
 			<image class="avatar" :src="user.userInfo&&user.userInfo.avatarUrl" mode=""></image>
 			<text class="icon refrash" :style="[refrash_styles]">&#xe8b4;</text>
 		</view>
 		<view class="con">
+			<button v-if="!hasLogin" type="primary" open-type="getUserInfo" @getuserinfo="handleGetUserInfo">获取用户信息</button>
 
 			<userContent v-for="(item,index) in monents" :key="index" :useravatar="item.useravatar" :nickname="item.nickname"
 			 :copywriting="item.copywriting" :monents="item.monents" />
@@ -25,18 +26,40 @@
 <script>
 	import userContent from './components/content.vue';
 	import api from '../../utils/interfaces.js';
-
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 
 		data() {
 			return {
 				header_image: 'https://api.huzhihui.org.cn/images_pub/pub_124.jpg',
 				top: null,
+				opacity: 0,
 				refrash_styles: {},
 				titleBg: 'rgba(255,255,255,0)',
-				user: {},
+				user: {
+					// userInfo: {
+					// 	avatarUrl: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
+					// 	nickName: "TigerZH",
+					// }
+
+				},
 				appear: false,
 				monents: [{
+						useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
+						nickname: "TigerZH",
+						copywriting: "快吃不起水果了🍊🍎🍞🥛",
+						monents: {
+							type: 'share',
+							list: [{
+								id: '',
+								url: this.ganImage(),
+								copywriting: '明年猪肉接着涨价，大家全部呆在家'
+							}]
+						}
+					}, {
 						useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
 						nickname: "TigerZH",
 						copywriting: "快吃不起水果了🍊🍎🍞🥛",
@@ -115,48 +138,55 @@
 						}
 					},
 
-					{
-						useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
-						nickname: "TigerZH",
-						copywriting: "快吃不起水果了🍊🍎🍞🥛",
-						monents: {
-							type: 'share',
-							list: [{
-								id: '',
-								url: ''
-							}]
-						}
-					}
+
 				]
 
 			}
+		},
+		computed: {
+			...mapState({
+				loginProvider: state => state.loginProvider,
+				hasLogin: state => state.hasLogin,
+
+			})
 		},
 		components: {
 			userContent
 		},
 		onLoad() {
 			this.header_image = this.ganImage();
-			uni.login({
-				provider: 'weixin',
-				success: (loginRes) => {
-					console.log(loginRes);
-					// 获取用户信息
-					uni.getUserInfo({
-						provider: 'weixin',
-						success: (infoRes) => {
-							console.log(infoRes);
-							this.user = infoRes;
-						},
-						complete(infoRes) {
-							console.log(infoRes);
-						}
-					});
-				}
-			});
+			this.handleGetUserInfo();
+
 		},
 		onPageScroll: function(e) {
 			// this.top = Math.sqrt(e.scrollTop);
 			console.log(e);
+			this.top = e.scrollTop;
+			const term = e.scrollTop / 300;
+			if (term > 1) {
+				this.opacity = 1;
+
+
+
+			} else {
+				this.opacity = term
+			}
+			uni.setNavigationBarColor({
+				frontColor: this.opacity === 1 ? "#000000" : "#ffffff",
+				backgroundColor: this.opacity === 1 ? "#F8F8F8" : "#007AFF"
+			})
+
+			//震动一下
+			if (e.scrollTop === -100) {
+				setTimeout(() => {
+					uni.vibrateShort({
+						success: function() {
+							console.log('success');
+						}
+					});
+				})
+
+			}
 			if (e.scrollTop < -100) {
 				this.refrash_styles = {
 					top: '100px',
@@ -168,11 +198,7 @@
 					timingFunction: "ease",
 					delay: 0
 				})
-				uni.vibrateShort({
-					success: function() {
-						console.log('success');
-					}
-				});
+
 			} else {
 				this.refrash_styles = {
 					top: '-100%',
@@ -180,9 +206,53 @@
 				}
 			}
 
-			this.titleBg = 'rgba(255,255,255,' + e.scrollTop / 300 + ')';
+			// this.titleBg = 'rgba(255,255,255,' + e.scrollTop / 300 + ')';
 		},
 		methods: {
+			...mapMutations(['login','asyncUserInfo']),
+			handleGetUserInfo() {
+				uni.login({
+					provider: 'weixin',
+					success: (loginRes) => {
+						console.log(loginRes);
+						this.login("weixin");
+						// 获取用户信息
+						uni.getUserInfo({
+							provider: 'weixin',
+							success: (infoRes) => {
+								console.log(infoRes);
+								this.user = infoRes;
+								this.asyncUserInfo(infoRes)
+							},
+							complete(infoRes) {
+								console.log(infoRes);
+							}
+						});
+					}
+				});
+			},
+			handleChangeCaver() {
+				const itemList = ['更换相册封面']
+				uni.showActionSheet({
+					itemList,
+					success: function(res) {
+						const course = itemList[res.tapIndex];
+						console.log(course);
+						uni.chooseImage({
+							count: 1, //默认9
+							sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+							sourceType: ['album'], //从相册选择
+							success: function(res) {
+								console.log(JSON.stringify(res.tempFilePaths));
+							}
+						});
+
+					},
+					fail: function(res) {
+						console.log(res.errMsg);
+					}
+				});
+			},
 			ganImage() {
 				const pub_img_num = 355;
 				const pub_img_current_no = function() {
@@ -217,23 +287,42 @@
 		background: #FFFFFF;
 	}
 
+	.nav {
+
+		position: fixed;
+		top: 0;
+		padding-top: var(--status-bar-height);
+		left: 0;
+		background: $header;
+		width: 100%;
+		height: 115upx;
+		display: flex;
+		justify-content: center;
+		align-items: flex-end;
+		z-index: 1;
+		font-size: 30upx;
+
+		.back {
+			// font-size: 65upx;
+			// position: absolute;
+			// top: 100%;
+			// left: 100%;
+			display: none;
+		}
+
+		.title {
+			font-weight: bold;
+			font-size: 30upx;
+			margin-bottom: 26upx;
+		}
+	}
+
 	.header {
 		width: 100%;
 		height: 38%;
 		position: relative;
 
-		.nav {
-			position: absolute;
-			top: 0;
-			background: #FFFFFF;
-			width: 100%;
-			height: 90upx;
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-			margin-top: const(--status-bar-height);
-			opacity: 0;
-		}
+
 
 		.refrash {
 			position: absolute;
