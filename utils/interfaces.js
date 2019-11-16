@@ -16,6 +16,8 @@ const interfaces = {
 	GET_IP: `${host}/ip`,
 	GET_SEARCH_SUGGEST: `${host}search/suggest`,
 	GET_SONG_URL: `${host}song/url`,
+	GET_IMAGE_STATIC: `${host}images_pub/`,
+	GET_VIDEO_STATIC: `${host}video_pub/`,
 	
 
 }

@@ -1,26 +1,35 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-		    "path" : "pages/tabBar/detail/detail",
-		    "style" : {}
+			"path": "pages/home/home",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarTextStyle":"white",
+				"navigationStyle": "custom",
+				// "transparentTitle":"always",
+				"disableScroll":false,
+				"backgroundColor":"#333333",
+				// "enablePullDownRefresh": "true",
+				"mp-weixin": {}
+			}
+		}, {
+			"path": "pages/tabBar/detail/detail",
+			"style": {}
 		},
 		{
 			"path": "pages/tabBar/home/home",
 			"style": {
 				"navigationBarTitleText": "温城说API",
-				
+
 				"app-plus": { // 取消默认的状态来
 					"titleNView": false,
 					"bounce": "none"
 				}
 			}
 		}
-	   
-        ,{
-            "path" : "pages/home/home",
-            "style" : {}
-        }
-    ],
+
+
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "温城说",
@@ -35,5 +44,5 @@
 			"query": "" //启动参数，在页面的onLoad函数里面得到
 		}]
 	}
-	
+
 }

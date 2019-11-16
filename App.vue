@@ -12,25 +12,27 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	/*每个页面公共css */
+
+
 	/* 添加iconfont文字 */
 	@font-face {
 		font-family: 'iconfont';
 		/* project id 1512466 */
-		src: url('//at.alicdn.com/t/font_1512466_y707xgjgj4m.eot');
-		src: url('//at.alicdn.com/t/font_1512466_y707xgjgj4m.eot?#iefix') format('embedded-opentype'),
-			url('//at.alicdn.com/t/font_1512466_y707xgjgj4m.woff2') format('woff2'),
-			url('//at.alicdn.com/t/font_1512466_y707xgjgj4m.woff') format('woff'),
-			url('//at.alicdn.com/t/font_1512466_y707xgjgj4m.ttf') format('truetype'),
-			url('//at.alicdn.com/t/font_1512466_y707xgjgj4m.svg#iconfont') format('svg');
+		src: url('//at.alicdn.com/t/font_1512466_fb2ox3yyvsh.eot');
+		src: url('//at.alicdn.com/t/font_1512466_fb2ox3yyvsh.eot?#iefix') format('embedded-opentype'),
+			url('//at.alicdn.com/t/font_1512466_fb2ox3yyvsh.woff2') format('woff2'),
+			url('//at.alicdn.com/t/font_1512466_fb2ox3yyvsh.woff') format('woff'),
+			url('//at.alicdn.com/t/font_1512466_fb2ox3yyvsh.ttf') format('truetype'),
+			url('//at.alicdn.com/t/font_1512466_fb2ox3yyvsh.svg#iconfont') format('svg');
 	}
 
 	.icon {
-		font-size: 60upx;
-		color: #fff;
+
 		font-family: iconfont;
 	}
+
 
 	page {
 		position: relative;
