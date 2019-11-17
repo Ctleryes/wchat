@@ -42,6 +42,16 @@
             "style" : {}
         }
        
+        ,{
+            "path" : "pages/home/components/user",
+            "style" : {
+				"navigationBarTitleText":""
+			}
+        }
+        ,{
+            "path" : "pages/home/components/user-setting",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

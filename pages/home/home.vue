@@ -5,9 +5,7 @@
 			<text class="title">温成说</text>
 		</view>
 		<view class="header">
-
 			<image @tap="handleChangeCaver" class="img" :src="header_image" mode="scaleToFill" />
-
 			<text class="nickname">{{user.userInfo&&user.userInfo.nickName}}</text>
 			<image class="avatar" :src="user.userInfo&&user.userInfo.avatarUrl" mode=""></image>
 			<text class="icon refrash" :style="[refrash_styles]">&#xe8b4;</text>
@@ -16,9 +14,15 @@
 			<button v-if="!hasLogin" type="primary" open-type="getUserInfo" @getuserinfo="handleGetUserInfo">获取用户信息</button>
 
 			<userContent v-for="(item,index) in monents" :key="index" :useravatar="item.useravatar" :nickname="item.nickname"
-			 :copywriting="item.copywriting" :monents="item.monents" />
+			 :copywriting="item.copywriting" :monents="item.monents" @on-commit="handleCommit" />
 		</view>
-
+		<!-- <input :style="{display:showcommit?'block':'none'}" class="input" confirm-type="发送"  placeholder=" " :focus="showcommit" placeholder="" @blur="showcommit=false" /> -->
+		<view class="commit" :style="{display:showcommit?'flex':'none'}">
+			<input :style="{display:showcommit?'block':'none'}" class="input" confirm-type="发送" 
+			:placeholder="` `" :focus="showcommit"
+			 placeholder="" @blur="showcommit=false" />
+			<text class="icon face">&#xe71c;</text>
+		</view>
 
 	</view>
 </template>
@@ -35,6 +39,7 @@
 		data() {
 			return {
 				header_image: 'https://api.huzhihui.org.cn/images_pub/pub_124.jpg',
+				showcommit: false,
 				top: null,
 				opacity: 0,
 				refrash_styles: {},
@@ -59,18 +64,20 @@
 								copywriting: '明年猪肉接着涨价，大家全部呆在家'
 							}]
 						}
-					}, {
-						useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
-						nickname: "TigerZH",
-						copywriting: "快吃不起水果了🍊🍎🍞🥛",
-						monents: {
-							type: 'vedio',
-							list: [{
-								id: 'vedio123',
-								url: `${api.GET_VIDEO_STATIC}pub_1.mp4`
-							}]
-						}
-					}, {
+					},
+					// {
+					// 	useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
+					// 	nickname: "TigerZH",
+					// 	copywriting: "快吃不起水果了🍊🍎🍞🥛",
+					// 	monents: {
+					// 		type: 'vedio',
+					// 		list: [{
+					// 			id: 'vedio123',
+					// 			url: `${api.GET_VIDEO_STATIC}pub_1.mp4`
+					// 		}]
+					// 	}
+					// },
+					{
 						useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
 						nickname: "王一迪",
 						copywriting: "快吃不起水果了🍊🍎🍞🥛",
@@ -173,7 +180,7 @@
 			}
 			uni.setNavigationBarColor({
 				frontColor: this.opacity === 1 ? "#000000" : "#ffffff",
-				backgroundColor: this.opacity === 1 ? "#F8F8F8" : "#007AFF"
+				backgroundColor: this.opacity === 1 ? "#F8F8F8" : "#f8f8f8"
 			})
 
 			//震动一下
@@ -209,7 +216,12 @@
 			// this.titleBg = 'rgba(255,255,255,' + e.scrollTop / 300 + ')';
 		},
 		methods: {
-			...mapMutations(['login','asyncUserInfo']),
+			...mapMutations(['login', 'asyncUserInfo']),
+			handleCommit() {
+				console.log('评论');
+				this.showcommit = true;
+
+			},
 			handleGetUserInfo() {
 				uni.login({
 					provider: 'weixin',
@@ -365,6 +377,33 @@
 
 
 	}
+
+	.commit {
+		display: flex;
+		background-color: $header;
+		align-items: center;
+		z-index: 2;
+		position: absolute;
+		bottom:22upx;
+		left: 0;
+		width: 100%;
+		padding: 10upx 13upx;
+
+		.input {
+			padding: 10upx 15upx;
+			display: flex;
+			flex: 1;
+			margin: 3upx 5upx;
+			background: #fff;
+		}
+
+		.face {
+			margin: 0px 30upx;
+			font-size: 50upx;
+
+		}
+	}
+
 
 	.con {
 		display: flex;

@@ -6,17 +6,14 @@
 
 <script>
 	export default {
-		props:{
-			url:{
-				type:'String',
-				default:'https://api.huzhihui.org.cn'
-			}
-		},
+	
 		data() {
 			return {
+				url: 'https://api.huzhihui.org.cn'
 			}
 		},
 		onLoad(options) {
+			console.log(options);
 			if (options && options.url) {
 				this.url = options.url;
 			}

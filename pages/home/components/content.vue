@@ -1,10 +1,10 @@
 <template>
 	<view class="list">
 		<!-- 头像 -->
-		<image class="avatar" :src="useravatar" mode=""></image>
+		<image class="avatar" :src="useravatar" mode="scaleToFill" @tap="handleGoUser"></image>
 		<view class="contain">
 			<!-- 昵称 -->
-			<text hover-class="nickname-hover" class="nickname">{{nickname}}</text>
+			<text hover-class="nickname-hover" class="nickname" @tap="handleGoUser">{{nickname}}</text>
 			<!-- 文案 -->
 			<rich-text v-if="copywriting" class="copywriter">
 				{{copywriting}}
@@ -43,8 +43,8 @@
 				<view class="time">
 					1分钟前
 				</view>
-				
-				<view class="more" >
+
+				<view class="more">
 					<view class="point">
 
 					</view>
@@ -58,7 +58,10 @@
 			<!-- 评论 -->
 			<view class="comment">
 				<view class="thumb">
-					<text class="icon">&#xe8ab;</text><text>&nbsp;&nbsp;苏苏</text>
+					<view class="person" @tap="handleGoUser">
+						<text class="icon">&#xe8ab;</text><text style="margin-left: 5px;">苏苏</text>
+
+					</view>
 				</view>
 				<view @tap="handleComitDiscuss" class="discuss">
 					<text class="name">苏苏</text>:
@@ -98,8 +101,9 @@
 		methods: {
 			handlePreviewImg(item, list) {
 				uni.previewImage({
+					current: item.url,
 					urls: list.map(e => e.url),
-					indicator:'none',
+					indicator: 'none',
 					longPressActions: {
 						itemList: ['发送给朋友', '保存图片', '收藏'],
 						success: function(data) {
@@ -111,24 +115,35 @@
 					}
 				})
 			},
-			handleComitDiscuss(){
-				
-			},
-			handleGoShare(list){
+			handleGoUser() {
 				uni.navigateTo({
-					url: '../../../components/webview?url=https://www.huzhihui.org.cn',
+					url: `../../../components/user`,
+					success: res => {},
+					fail: () => {},
+					complete: (e) => {
+						console.log(e);
+					}
+				});
+			},
+			handleComitDiscuss() {
+				console.log("应该能够弹出键盘");
+				this.$emit('on-commit')
+			},
+			handleGoShare(list) {
+				uni.navigateTo({
+					url: '../../../components/webview?url=https://api.huzhihui.org.cn',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
 				});
 			},
-			handleGoMap(){
+			handleGoMap() {
 				uni.navigateTo({
 					url: '../../../components/map',
 					success: res => {},
 					fail: (e) => {
 						console.log(e);
-						
+
 					}
 				});
 			},
@@ -148,13 +163,14 @@
 		position: relative;
 		display: flex;
 		flex: 1;
-		border-bottom: 1upx solid $header;
+		border-bottom: 1upx solid $border;
 		padding: 20upx;
 
 		.avatar {
 			height: 70upx;
 			width: 70upx;
 			border-radius: 10upx;
+			margin-right: 10upx;
 		}
 
 		.contain {
@@ -169,9 +185,10 @@
 				font-size: 30upx;
 				font-weight: 900;
 				color: $name;
-				
+
 			}
-			.nickname-hover{
+
+			.nickname-hover {
 				background-color: $mask;
 				color: #fff;
 			}
@@ -251,7 +268,7 @@
 			.comment {
 				background-color: $header;
 				width: 100%;
-				padding: 10upx;
+				// padding: 10upx;
 				position: relative;
 				display: flex;
 				flex-direction: column;
@@ -264,9 +281,9 @@
 					flex-wrap: wrap;
 					justify-content: flex-start;
 					align-items: center;
+					padding: 10upx 15upx;
 					// border-bottom: 1upx solid #f4f4f4;
-					width: 100%;
-					border-bottom: 1upx solid $header;
+					border-bottom: 1upx solid $commentline;
 
 					// font-weight: bold;
 
@@ -278,9 +295,18 @@
 					justify-content: flex-start;
 					align-items: center;
 					flex-wrap: wrap;
+					padding: 10upx 15upx;
 
 					.name {
 						color: $name;
+						height: 100%;
+						line-height: 100%;
+						margin-right: 10upx;
+					}
+
+					.text {
+						height: 100%;
+						line-height: 100%;
 					}
 				}
 			}
@@ -291,7 +317,7 @@
 				width: 0px;
 				height: 0px;
 				border: 20upx solid transparent;
-				border-bottom: 22upx solid #F1F1F1;
+				border-bottom: 22upx solid $header;
 				position: absolute;
 				top: -34upx;
 				left: 2%;
