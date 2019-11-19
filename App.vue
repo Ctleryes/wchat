@@ -34,8 +34,13 @@
 	}
 
 
+
 	page {
 		position: relative;
 		background-color: #fff;
+	}
+
+	.active:active {
+		background: rgba($color: $name, $alpha:.1);
 	}
 </style>

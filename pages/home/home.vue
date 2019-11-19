@@ -5,16 +5,17 @@
 			<text class="title">温成说</text>
 		</view>
 		<view class="header">
-			<image @tap="handleChangeCaver" class="img" :src="header_image" mode="scaleToFill" />
+			<image class="img" :lazy-load="true" :src="header_image" mode="scaleToFill" @tap="handleChangeCaver" />
 			<text class="nickname">{{user.userInfo&&user.userInfo.nickName}}</text>
-			<image class="avatar" :src="user.userInfo&&user.userInfo.avatarUrl" mode=""></image>
+			<image class="avatar" :lazy-load="true" :src="user.userInfo&&user.userInfo.avatarUrl" mode=""></image>
 			<text class="icon refrash" :style="[refrash_styles]">&#xe8b4;</text>
 		</view>
 		<view class="con">
 			<button v-if="!hasLogin" type="primary" open-type="getUserInfo" @getuserinfo="handleGetUserInfo">获取用户信息</button>
 
 			<userContent v-for="(item,index) in monents" :key="index" :useravatar="item.useravatar" :nickname="item.nickname"
-			 :copywriting="item.copywriting" :monents="item.monents" @on-commit="handleCommit" />
+			 :copywriting="item.copywriting" :signature="item.signature" :monents="item.monents" @on-commit="handleCommit" />
+			<view class="loadmore" v-if="showLoadMore">{{loadMoreText}}</view>
 		</view>
 		<!-- <input :style="{display:showcommit?'block':'none'}" class="input" confirm-type="发送"  placeholder=" " :focus="showcommit" placeholder="" @blur="showcommit=false" /> -->
 		<view class="commit" :style="{display:showcommit?'flex':'none'}">
@@ -27,8 +28,10 @@
 </template>
 
 <script>
-	import userContent from './components/content.vue';
-	import api from '../../utils/interfaces.js';
+	import userContent from '@/pages/home/components/content.vue';
+	import api from '@/utils/interfaces.js';
+	import minix from '@/utils/minix';
+
 	import {
 		mapState,
 		mapMutations
@@ -37,24 +40,32 @@
 
 		data() {
 			return {
+				title: '下拉刷新 + 加载更多',
+				data: [],
+				loadMoreText: "加载中...",
+				showLoadMore: false,
+				max: 0,
+
 				header_image: 'https://api.huzhihui.org.cn/images_pub/pub_124.jpg',
 				showcommit: false,
 				top: null,
 				opacity: 0,
 				refrash_styles: {},
 				titleBg: 'rgba(255,255,255,0)',
+
 				user: {
 					// userInfo: {
-					// 	avatarUrl: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
+					// 	avatarUrl: this.ganImage(),
 					// 	nickName: "TigerZH",
 					// }
 
 				},
 				appear: false,
 				monents: [{
-						useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
-						nickname: "TigerZH",
-						copywriting: "快吃不起水果了🍊🍎🍞🥛",
+						useravatar: this.ganImage(),
+						nickname: "王力宏",
+						copywriting: "FPX牛批！！！！",
+						signature: '无提',
 						monents: {
 							type: 'share',
 							list: [{
@@ -65,7 +76,7 @@
 						}
 					},
 					// {
-					// 	useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
+					// 	useravatar: this.ganImage(),
 					// 	nickname: "TigerZH",
 					// 	copywriting: "快吃不起水果了🍊🍎🍞🥛",
 					// 	monents: {
@@ -77,9 +88,10 @@
 					// 	}
 					// },
 					{
-						useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
-						nickname: "王一迪",
-						copywriting: "快吃不起水果了🍊🍎🍞🥛",
+						useravatar: this.ganImage(),
+						nickname: "周杰伦",
+						copywriting: "我没胖！！！",
+						signature: '也许我不是你的小可爱',
 						monents: {
 							type: 'image',
 							list: [{
@@ -112,9 +124,10 @@
 							}, ]
 						}
 					}, {
-						useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
+						useravatar: this.ganImage(),
 						nickname: "王一迪",
 						copywriting: "快吃不起水果了🍊🍎🍞🥛",
+						signature: '原谅我不完美',
 						monents: {
 							type: 'image',
 							list: [{
@@ -123,9 +136,10 @@
 							}]
 						}
 					}, {
-						useravatar: "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoET4pvRb145Gibs3yRH8L5dxtLiblRrX2IvRJvfcklYP9GMuU3s1EA3DbF9Chv0d0QuytG4wtTzEJQ/132",
-						nickname: "王一迪",
-						copywriting: "快吃不起水果了🍊🍎🍞🥛",
+						useravatar: this.ganImage(),
+						nickname: "姜丽起",
+						signature: '？',
+						copywriting: "王者dd",
 						monents: {
 							type: 'image',
 							list: [{
@@ -149,6 +163,7 @@
 
 			}
 		},
+		mixins: [minix],
 		computed: {
 			...mapState({
 				loginProvider: state => state.loginProvider,
@@ -160,9 +175,17 @@
 			userContent
 		},
 		onLoad() {
+			this.max = 0;
+			this.loadMoreText = "加载更多";
+			this.showLoadMore = false;
 			this.header_image = this.ganImage();
 			this.handleGetUserInfo();
 
+
+		},
+		onReachBottom() {
+			this.showLoadMore = true;
+			this.monents.push(...this.monents)
 		},
 		onPageScroll: function(e) {
 			// this.top = Math.sqrt(e.scrollTop);
@@ -216,6 +239,7 @@
 		},
 		methods: {
 			...mapMutations(['login', 'asyncUserInfo']),
+
 			handleCommit() {
 				console.log('评论');
 				this.showcommit = true;
@@ -246,14 +270,15 @@
 				const itemList = ['更换相册封面']
 				uni.showActionSheet({
 					itemList,
-					success: function(res) {
+					success: (res) => {
 						const course = itemList[res.tapIndex];
 						console.log(course);
 						uni.chooseImage({
 							count: 1, //默认9
 							sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 							sourceType: ['album'], //从相册选择
-							success: function(res) {
+							success: (res) => {
+								this.header_image = res.tempFilePaths[0];
 								console.log(JSON.stringify(res.tempFilePaths));
 							}
 						});
@@ -264,17 +289,7 @@
 					}
 				});
 			},
-			ganImage() {
-				const pub_img_num = 355;
-				const pub_img_current_no = function() {
-					return Math.floor(Math.random() * pub_img_num + 1);
-				};
-				const pub_img_url = function() {
-					return api.GET_IMAGE_STATIC + 'pub_' + pub_img_current_no() + '.jpg';
-				};
-				return pub_img_url();
 
-			},
 			scrolltoupper(e) {
 				console.log(e);
 				uni.vibrateShort({
@@ -352,6 +367,7 @@
 		.img {
 			height: 100%;
 			width: 100%;
+			background-color: $mask;
 		}
 
 		.nickname {

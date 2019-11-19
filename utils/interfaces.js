@@ -18,6 +18,7 @@ const interfaces = {
 	GET_SONG_URL: `${host}song/url`,
 	GET_IMAGE_STATIC: `${host}images_pub/`,
 	GET_VIDEO_STATIC: `${host}video_pub/`,
+	GET_DOC: `${host}doc`,
 	
 
 }

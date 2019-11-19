@@ -4,7 +4,7 @@
 
 		</view>
 		<!-- 头像 -->
-		<image class="avatar" :src="useravatar" mode="scaleToFill" @tap="handleGoUser"></image>
+		<image class="avatar" :lazy-load="true" :src="useravatar" mode="scaleToFill" @tap="handleGoUser" @error="imageError"></image>
 		<view class="contain">
 			<!-- 昵称 -->
 			<text hover-class="nickname-hover" class="nickname" @tap="handleGoUser">{{nickname}}</text>
@@ -15,7 +15,7 @@
 			<!-- 图片 视频 分享 -->
 			<view v-if="monents.type" class="monents">
 				<view v-if="monents.type==='share'" @tap="handleGoShare(monents.list[0])" class="mon share">
-					<image style="height:50px;width:50px ;" :src="monents.list[0].url" mode="scaleToFill"></image>
+					<image style="height:50px;width:50px ;" :lazy-load="true" :src="monents.list[0].url" mode="scaleToFill" @error="imageError"></image>
 					<text style="margin: 0 0 0 10px;">{{monents.list[0].copywriting}}</text>
 				</view>
 				<view v-if="monents.type==='vedio'" class="mon vedio">
@@ -29,11 +29,11 @@
 					  }"
 					 :key="index">
 						<!-- scaleToFill aspectFit -->
-						<image @tap="handlePreviewImg(item,monents.list)" :style="{
+						<image :lazy-load="true" @tap="handlePreviewImg(item,monents.list)" :style="{
 							width: '100%',
 							'max-height':monents.list.length!==1&&'100px'
 						}"
-						 :src="item.url" mode="aspectFit" />
+						 :src="item.url" mode="aspectFit" @error="imageError" />
 					</view>
 				</view>
 			</view>
@@ -87,6 +87,7 @@
 </template>
 
 <script>
+	import minix from '@/utils/minix';
 	export default {
 		props: {
 			useravatar: {
@@ -101,6 +102,10 @@
 				type: String,
 				default: ''
 			},
+			signature: {
+				type: String,
+				default: ''
+			},
 			monents: {
 				type: Object,
 				default: {}
@@ -112,6 +117,8 @@
 				showcommit: false
 			}
 		},
+		
+		mixins: [minix],
 		methods: {
 			handlePreviewImg(item, list) {
 				uni.previewImage({
@@ -130,8 +137,14 @@
 				})
 			},
 			handleGoUser() {
+				const params = {
+					avatarUrl: this.useravatar,
+					nickName: this.nickname,
+					monents: this.monents,
+					signature: this.signature
+				}
 				uni.navigateTo({
-					url: `../../../components/user`,
+					url: `../../../components/user?params=${JSON.stringify(params)}`,
 					success: res => {},
 					fail: () => {},
 					complete: (e) => {
@@ -210,6 +223,10 @@
 
 			}
 
+			.nickname:active {
+				background: rgba($color: $name, $alpha:.1);
+			}
+
 			.nickname-hover {
 				background-color: $mask;
 				color: #fff;
@@ -281,6 +298,10 @@
 			.adder {
 				color: $name;
 				font-size: 25upx;
+			}
+
+			.adder:active {
+				background: rgba($color: $name, $alpha:.1);
 			}
 
 			.monents {
@@ -356,10 +377,18 @@
 						margin-right: 10upx;
 					}
 
+					.name:active {
+						background: rgba($color: $name, $alpha:.1);
+					}
+
 					.text {
 						height: 100%;
 						line-height: 100%;
 					}
+				}
+
+				.discuss:active {
+					background: rgba($color: $name, $alpha:.1);
 				}
 			}
 
