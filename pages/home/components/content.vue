@@ -14,7 +14,7 @@
 			<!-- 图片 视频 分享 -->
 			<view v-if="monents.type" class="monents">
 				<view v-if="monents.type==='share'" @tap="handleGoShare(monents.list[0])" class="mon share">
-					<image style="height:50px;width:50px ;" :lazy-load="true" :src="monents.list[0].url" mode="scaleToFill" @error="imageError"></image>
+					<image style="height:50px;width:50px ;" :lazy-load="true" :src="monents.list[0].url" mode="aspectFill" @error="imageError"></image>
 					<text class="share-copywriting" style="margin: 0 0 0 10px;">{{monents.list[0].copywriting}}</text>
 				</view>
 				<view v-if="monents.type==='vedio'" class="mon vedio">
@@ -27,12 +27,12 @@
 					  						 width:monents.list.length===1?'60%':'30%'
 					  }"
 					 :key="index">
-						<!-- scaleToFill aspectFit -->
+						<!-- scaleToFill aspectFill -->
 						<image :lazy-load="true" @tap="handlePreviewImg(item,monents.list)" :style="{
 							width: '100%',
 							'max-height':monents.list.length!==1&&'100px'
 						}"
-						 :src="item.url" mode="aspectFit" @error="imageError" />
+						 :src="item.url" mode="aspectFill" @error="imageError" />
 					</view>
 				</view>
 			</view>

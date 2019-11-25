@@ -1,21 +1,26 @@
 <template>
-	<!-- 状态栏 -->
-	<view class="status"></view>
+	<view :style="{ height: statusBarHeight }" class="uni-status-bar">
+		<slot />
+	</view>
 </template>
 
 <script>
+	var statusBarHeight = uni.getSystemInfoSync().statusBarHeight + 'px'
+	export default {
+		name: 'UniStatusBar',
+		data() {
+			return {
+				statusBarHeight: statusBarHeight
+			}
+		}
+	}
 </script>
 
-<style lang="scss">
-	.status {
-		width: 100%;
-		position: fixed;
-		z-index: 10;
-		background-color: #fff;
-		top: 0;
-		height: 0;
-		/*  #ifdef  APP-PLUS  */
-		height: var(--status-bar-height); //覆盖样式
-		/*  #endif  */
+<style scoped>
+	.uni-status-bar {
+		width: 750rpx;
+		height: 20px;
+		/* height: var(--status-bar-height);
+ */
 	}
 </style>

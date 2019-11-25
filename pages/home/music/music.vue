@@ -1,7 +1,7 @@
 <template>
 	<view class="page" :style="{'background-image':`url(${music.image})` }">
 		<!-- 导航栏 -->
-		<view class="header">
+		<view class="header" :style="{'padding-top':statusBarHeight}">
 			<navigator open-type="navigateBack" class="back"><text class="icon">&#xe6ed;</text></navigator>
 			<text class="name">{{music.name}}</text>
 		</view>
@@ -58,6 +58,8 @@
 
 			...mapState({
 				music: state => state.music.curr_music,
+				statusBarHeight: state => state.statusBarHeight,
+
 			})
 		},
 
@@ -104,6 +106,15 @@
 				});
 				innerAudioContext.onWaiting(() => {
 					console.log('音频正在加载中...');
+				})
+				innerAudioContext.onPause(() => {
+					this.state = 'pause';
+				})
+				innerAudioContext.onPrev(() => {
+					this.state = '上一首';
+				})
+				innerAudioContext.onNext(() => {
+					this.state = '下一首';
 				})
 				innerAudioContext.onEnded(() => {
 					this.state = 'ended';
@@ -269,30 +280,37 @@
 			opacity: 0.6;
 			height: 630upx;
 			width: 630upx;
+			border: 30upx solid #fff;
 		}
 
 		30% {
 			opacity: 0.4;
 			height: 700upx;
 			width: 700upx;
+			border: 20upx solid #fff;
 		}
 
 		60% {
 			opacity: 0.2;
 			height: 770upx;
 			width: 770upx;
+			border: 10upx solid #fff;
+
 		}
 
 		90% {
 			opacity: 0.1;
 			height: 840upx;
 			width: 840upx;
+			border: 5upx solid #fff;
 		}
 
 		100% {
 			opacity: 0.3;
 			height: 630upx;
 			width: 630upx;
+			border: 30upx solid #fff;
+
 		}
 	}
 

@@ -1,32 +1,32 @@
 <template>
-		<view class="app">
-			<view class="nav" :style="{opacity:opacity }">
-				<text class="icon back">&#xe6ed;</text>
-				<text class="title">温成说</text>
-			</view>
-			<view class="header">
-				<view class="img-box">
-					<image class="img" :lazy-load="true" :src="header_image" mode="scaleToFill" @tap="handleChangeCaver" />
-				</view>
-				<text class="nickname">{{user.userInfo&&user.userInfo.nickName}}</text>
-				<image class="avatar" :lazy-load="true" :src="user.userInfo&&user.userInfo.avatarUrl" mode=""></image>
-				<text class="icon refrash" :style="[refrash_styles]">&#xe8b4;</text>
-			</view>
-			<view class="con">
-				<button v-if="!hasLogin" type="primary" open-type="getUserInfo" @getuserinfo="handleGetUserInfo">获取用户信息</button>
-
-				<userContent v-for="(item,index) in monents" :key="index" :useravatar="item.useravatar" :nickname="item.nickname"
-				 :copywriting="item.copywriting" :signature="item.signature" :monents="item.monents" @on-commit="handleCommit" />
-				<view class="loadmore" v-if="showLoadMore">{{loadMoreText}}</view>
-			</view>
-			<!-- <input :style="{display:showcommit?'block':'none'}" class="input" confirm-type="发送"  placeholder=" " :focus="showcommit" placeholder="" @blur="showcommit=false" /> -->
-			<view class="commit" :style="{display:showcommit?'flex':'none'}">
-				<input :style="{display:showcommit?'block':'none'}" class="input" confirm-type="发送" :placeholder="` `" :focus="showcommit"
-				 placeholder="" @blur="showcommit=false" />
-				<text class="icon face">&#xe71c;</text>
-			</view>
-
+	<view class="app">
+		<view class="nav" :style="{opacity:opacity,'padding-top':statusBarHeight }">
+			<text class="icon back">&#xe6ed;</text>
+			<text class="title">温成说</text>
 		</view>
+		<view class="header">
+			<view class="img-box">
+				<image class="img" :lazy-load="true" :src="header_image" mode="bottom" @tap="handleChangeCaver" />
+			</view>
+			<text class="nickname">{{user.userInfo&&user.userInfo.nickName}}</text>
+			<image class="avatar" :lazy-load="true" :src="user.userInfo&&user.userInfo.avatarUrl" mode="aspectFill"></image>
+			<text class="icon refrash" :style="[refrash_styles]">&#xe8b4;</text>
+		</view>
+		<view class="con">
+			<button v-if="!hasLogin" type="primary" open-type="getUserInfo" @getuserinfo="handleGetUserInfo">获取用户信息</button>
+
+			<userContent v-for="(item,index) in monents" :key="index" :useravatar="item.useravatar" :nickname="item.nickname"
+			 :copywriting="item.copywriting" :signature="item.signature" :monents="item.monents" @on-commit="handleCommit" />
+			<view class="loadmore" v-if="showLoadMore">{{loadMoreText}}</view>
+		</view>
+		<!-- <input :style="{display:showcommit?'block':'none'}" class="input" confirm-type="发送"  placeholder=" " :focus="showcommit" placeholder="" @blur="showcommit=false" /> -->
+		<view class="commit" :style="{display:showcommit?'flex':'none'}">
+			<input :style="{display:showcommit?'block':'none'}" class="input" confirm-type="发送" :placeholder="` `" :focus="showcommit"
+			 placeholder="" @blur="showcommit=false" />
+			<text class="icon face">&#xe71c;</text>
+		</view>
+
+	</view>
 
 </template>
 
@@ -171,11 +171,12 @@
 			...mapState({
 				loginProvider: state => state.loginProvider,
 				hasLogin: state => state.hasLogin,
+				statusBarHeight: state => state.statusBarHeight,
 
 			})
 		},
 		components: {
-			userContent
+			userContent,
 		},
 		onLoad() {
 			this.max = 0;
@@ -377,6 +378,7 @@
 				bottom: 0upx;
 				left: 0upx;
 				width: 100%;
+				height: 100%;
 
 			}
 
