@@ -1,13 +1,24 @@
 <template>
-	<view class="page" :style="{'background-image':music.curr_music.artists[0].img1v1Url}">
-		<view class="music roate" ref="music">
-			<image @tap="handleTogglePlay" class="image" :src="music.curr_music.artists[0].img1v1Url" mode="aspectFill"></image>
+	<view class="page" :style="{'background-image':`url(${music.image})` }">
+		<!-- 导航栏 -->
+		<view class="header">
+			<navigator open-type="navigateBack" class="back"><text class="icon">&#xe6ed;</text></navigator>
+			<text class="name">{{music.name}}</text>
+		</view>
+
+		<view class="music roate" :style="{'animation-play-state':state==='pause'?'paused':'running'}" ref="music">
+			<!-- 播放圆盘 -->
+			<!-- <view :animation="animation" class="music" ref="music"> -->
+			<image @tap="handleTogglePlay" class="image" :src="music.image" mode="aspectFill">
+				<text @tap="handleTogglePlay" v-if="state==='pause'" class="icon play">&#xe664;</text>
+			</image>
 		</view>
 	</view>
 </template>
 
 <script>
-	const innerAudioContext = uni.createInnerAudioContext();
+	const innerAudioContext = uni.getBackgroundAudioManager();
+
 	import api from '@/utils/interfaces.js'
 	import {
 		mapState,
@@ -16,7 +27,7 @@
 	export default {
 		data() {
 			return {
-
+				state: '',
 			}
 		},
 		onLoad() {
@@ -24,40 +35,29 @@
 
 			// const key = 'MUSIC';
 			// let musi c = uni.getStorageSync(key) || '{}';
-			console.log(this.music);
 			uni.setNavigationBarTitle({
-				title: this.music.curr_music.name
+				title: this.music.name
 			});
 			uni.setNavigationBarColor({
 				frontColor: "#ff8344",
 				backgroundColor: "#f8f8f8"
 			})
 			// debugger;
+			console.log(this.music);
 			// console.log(JSON.parse(params));
 			// this.init()
 			this.setOptions()
 		},
+		onHide() {
+
+		},
 		computed: {
 
 			...mapState({
-				music: state => state.music,
+				music: state => state.music.curr_music,
 			})
 		},
-		watch: {
-			music: {
-				deep: true,
-				handleChange(params) {
-					const roateDom = this.$refs.music;
-					if (!params) return;
-					if (!roateDom) return;
-					if (params.state === 'playing') {
-						roateDom.style.webkitAnimationPlayState = 'running';
-					} else {
-						roateDom.style.webkitAnimationPlayState = 'paused';
-					}
-				}
-			}
-		},
+
 		methods: {
 
 			...mapMutations(['asyncMusic']),
@@ -68,36 +68,42 @@
 				innerAudioContext.pause()
 			},
 			handleTogglePlay() {
-				console.log(innerAudioContext);
+				if (innerAudioContext.paused) {
+					this.play()
+					this.state = 'playing';
+				} else {
+					this.pause();
+					this.state = 'pause';
+				}
 			},
 			setOptions() {
-
-				// innerAudioContext.autoplay = true;
-				innerAudioContext.src = this.music.curr_music.url;
+				const url = this.music.url;
+				if (!url) return;
+				innerAudioContext.autoplay = true;
 				innerAudioContext.loop = true;
-				// 是否遵循系统静音开关，当此参数为 false 时，即使用户打开了静音开关，也能继续发出声音，默认值 true
-				innerAudioContext.obeyMuteSwitch = false;
-				innerAudioContext.play();
-				innerAudioContext.pause()
-				innerAudioContext.onTimeUpdate = () => {
-					this.currentTime = innerAudioContext.currentTime;
-					this.duration = innerAudioContext.duration;
+				innerAudioContext.src = url;
+				innerAudioContext.coverImgUrl = this.music.image;
+				innerAudioContext.title = this.music.name;
 
-				}
 				innerAudioContext.onPlay(() => {
-
 					console.log('开始播放');
-					// const music = JSON.parse(JSON.stringify(this.music))
-					// const his_list = music.his_list || [];
-					// his_list.push(this.value.toString());
-					// music.his_list = his_list;
-					this.currentTime = innerAudioContext.currentTime;
-					this.duration = innerAudioContext.duration;
+					this.state = 'playing';
+					// const bgAudioMannager = uni.getBackgroundAudioManager();
+					// bgAudioMannager.title = this.music.name;
+					// bgAudioMannager.singer = '暂无';
+					// bgAudioMannager.coverImgUrl = this.music.image;
+					// bgAudioMannager.src = url;
 				});
 				innerAudioContext.onError((res) => {
 					console.log(res.errMsg);
 					console.log(res.errCode);
 				});
+				innerAudioContext.onWaiting(() => {
+					console.log('音频正在加载中...');
+				})
+				innerAudioContext.onEnded(() => {
+					this.state = 'ended';
+				})
 			},
 
 		}
@@ -111,16 +117,45 @@
 		flex-direction: column;
 		height: 100%;
 		width: 100%;
-		background-size: 100% 100%;
 		object-fit: fill;
-		filter: brightness(80%);
-		background-size: 100% 100%;
+		// filter: brightness(80%);
+		background-size: cover;
 		object-fit: fill;
 		background-color: #efefef;
 		justify-content: center;
 		align-items: center;
+		background-position: center center;
+		background-repeat: no-repeat;
+
+
 
 	}
+
+	.header {
+		width: 100%;
+		height: 100upx;
+		position: absolute;
+		left: 0;
+		top: 0;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		padding-top: var(--status-bar-height);
+
+		.back {
+			position: absolute;
+			left: 40rpx;
+			top: calc(var(--status-bar-height)+40upx);
+			color: #fff;
+			font-size: 50rpx;
+		}
+
+		.name {
+			color: #fff;
+			font-size: 40upx;
+		}
+	}
+
 
 	.music {
 		border-radius: 50%;
@@ -133,10 +168,24 @@
 		position: relative;
 
 		.image {
-			height: 350upx;
-			width: 350upx;
+			height: 400upx;
+			width: 400upx;
 			border-radius: 50%;
 			z-index: 1;
+			position: relative;
+
+
+
+		}
+
+		.play {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			color: #fff;
+			font-size: 150upx;
+			z-index: 2;
 
 		}
 	}
@@ -146,13 +195,15 @@
 		border-radius: 50%;
 		height: 600upx;
 		width: 600upx;
-		border: 30upx solid #f00;
+		border: 30upx solid #fff;
 		position: absolute;
 		// background-color: #f00;
 		left: 50%;
 		top: 50%;
 		z-index: 0;
 		transform: translate(-50%, -50%);
+		opacity: .48;
+
 
 
 	}
@@ -169,6 +220,9 @@
 		top: 50%;
 		z-index: 0;
 		transform: translate(-50%, -50%);
+		opacity: .5;
+		animation: wave 3s infinite linear;
+		-webkit-animation: wave 3s infinite linear;
 	}
 
 	.active:active {
@@ -187,9 +241,44 @@
 		-webkit-animation: circle 25s infinite linear;
 	}
 
+	@keyframes wave {
+		0% {
+			opacity: 0.6;
+			height: 630upx;
+			width: 630upx;
+		}
+
+		30% {
+			opacity: 0.4;
+			height: 700upx;
+			width: 700upx;
+		}
+
+		60% {
+			opacity: 0.2;
+			height: 770upx;
+			width: 770upx;
+		}
+
+		90% {
+			opacity: 0.1;
+			height: 840upx;
+			width: 840upx;
+		}
+		100% {
+			opacity: 0.3;
+			height: 630upx;
+			width: 630upx;
+		}
+	}
+
 	@keyframes circle {
 		0% {
 			transform: rotate(0deg);
+		}
+
+		50% {
+			transform: rotate(180deg);
 		}
 
 		100% {

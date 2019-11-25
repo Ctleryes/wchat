@@ -90,7 +90,7 @@
 		methods: {
 			handleGoMusic(m) {
 				uni.navigateTo({
-					url: '../music/music',
+					url: '../music/search',
 					success: res => {},
 					fail: (e) => {
 						console.log(e);

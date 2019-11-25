@@ -371,15 +371,13 @@
 			width: 100%;
 			background-color: $mask;
 			position: relative;
-
-			.img {
+			.img{
 				position: absolute;
 				bottom: 0upx;
 				left: 0upx;
 				width: 100%;
-
+				
 			}
-
 			// position: absolute;
 			// bottom: -300upx;
 			// left: 0;

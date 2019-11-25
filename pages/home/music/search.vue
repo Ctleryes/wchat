@@ -16,7 +16,7 @@
 			</view>
 			<text class="icon play">&#xe664;</text>
 		</view>
-		<view class="history" v-if="music.his_list.length||songs.length">
+		<view class="history" v-if="music.his_list.length">
 			<view class="title">
 				<text style="color:#333">历史记录</text>
 				<text class="icon" @tap="asyncData('')" style="font-size: 15px;">&#xe671;</text>
@@ -76,7 +76,6 @@
 
 			},
 			handleClear() {
-				console.log(123);
 				this.songs = [];
 				this.value = "";
 			},
@@ -88,28 +87,42 @@
 					data: {
 						id: item.id
 					},
-					success: res => {
+					success: async res => {
 						let data = res.body.data[0];
-						// item = JSON.parse(JSON.stringify(item));
-						// data = JSON.parse(JSON.stringify(data));
-						const params = {
-							...item,
-							...data
-						}
-						const key = 'MUSIC';
-						let music = uni.getStorageSync(key) || '{}';
-						music = JSON.parse(music);
-						music.curr_music = params;
-						this.asyncMusic(music);
-						uni.setStorageSync(key, JSON.stringify(music))
-						// console.log(params);
-						uni.navigateTo({
-							url: `./music`,
-							success: e => {
-								this.asyncData(item.name.toString());
-								this.handleClear()
-							}
-						})
+                     
+						uni.request({
+							url: `${api.GET_MUSIC_DETAIL}?ids=${data.id}`,
+							method: 'GET',
+							data: {},
+							success: detail => {
+								const image = detail.data.body.songs[0].al.picUrl;
+								// item = JSON.parse(JSON.stringify(item));
+								// data = JSON.parse(JSON.stringify(data));
+								const params = {
+									...item,
+									...data,
+									image
+								}
+								const key = 'MUSIC';
+								let music = uni.getStorageSync(key) || '{}';
+								music = JSON.parse(music);
+								music.curr_music = params;
+								this.asyncMusic(music);
+								uni.setStorageSync(key, JSON.stringify(music))
+								// console.log(params);
+								uni.navigateTo({
+									url: `./music`,
+									success: e => {
+										this.asyncData(item.name.toString());
+										this.handleClear()
+									}
+								})
+							},
+							fail: () => {},
+							complete: () => {}
+						});
+
+
 						// this.url = res.body.data[0].url;
 						// this.init()
 					},
