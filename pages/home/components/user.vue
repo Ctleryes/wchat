@@ -3,7 +3,7 @@
 		<view class="user">
 			<!-- 头像 -->
 			<!-- scaleToFill aspectFit -->
-			<image :src="user.avatarUrl" mode="scaleToFill" />
+			<image :src="user.avatarUrl" mode="scaleToFill" @tap="handlePreview" />
 			<!-- 个人信息区域 -->
 			<view class="person">
 				<view class="remark-name">
@@ -34,7 +34,6 @@
 			</view>
 			<view class="monents">
 				<text>Moments</text>
-
 				<view class="images">
 					<!-- scaleToFill aspectFit -->
 					<image :src="ganImage()" mode="scaleToFill"></image>
@@ -42,7 +41,7 @@
 					<image :src="ganImage()" mode="scaleToFill"></image>
 					<image :src="ganImage()" mode="scaleToFill"></image>
 				</view>
-				<text class="icon allow-right">&#xe6eb;</text>
+				<text class="icon allow-right" style="font-size: 20px;">&#xe6eb;</text>
 
 			</view>
 		</view>
@@ -97,21 +96,36 @@
 
 					}
 				});
+			},
+			handlePreview() {
+				uni.previewImage({
+					current: this.user.avatarUrl,
+					urls: [this.user.avatarUrl],
+					indicator: 'none',
+					longPressActions: {
+						itemList: ['发送给朋友', '保存图片', '收藏'],
+						success: function(data) {
+							console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
+						},
+						fail: function(err) {
+							console.log(err.errMsg);
+						}
+					}
+				})
 			}
 		}
 	}
 </script>
 
 <style lang="scss">
-	
-
 	page {
 		background-color: $header;
 	}
-	text {
-		font-size: 30upx;
-	}
 
+	text {
+		font-size: 32upx;
+	}
+   
 	.hover {
 		background: #efefef;
 	}
@@ -152,7 +166,7 @@
 
 				.subname {
 					color: #666;
-					font-size: 25upx;
+					font-size: 28upx;
 				}
 			}
 		}
@@ -194,7 +208,7 @@
 			.monents {
 				display: flex;
 				padding: 35upx;
-				justify-content: flex-start;
+				justify-content:space-between;
 				align-items: center;
 
 				.images {
