@@ -120,6 +120,11 @@
 				innerAudioContext.pause()
 			},
 			handleTogglePlay() {
+				uni.vibrateShort({
+					success: function() {
+						console.log('success');
+					}
+				});
 				if (this.state !== 'playing') {
 					this.play()
 					this.state = 'playing';
@@ -129,6 +134,11 @@
 				}
 			},
 			setOptions() {
+				uni.vibrateShort({
+					success: function() {
+						console.log('success');
+					}
+				});
 				const url = this.music.url;
 				if (!url) return;
 				innerAudioContext.autoplay = true;
@@ -166,6 +176,7 @@
 				})
 				innerAudioContext.onEnded(() => {
 					this.state = 'ended';
+					innerAudioContext.seek = 0;
 				})
 			},
 
