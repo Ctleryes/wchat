@@ -2,7 +2,7 @@
 	<view class="page">
 		<view class="search">
 			<text class="icon">&#xe8b9;</text>
-			<input class="input text-over" focus type="text" v-model="value" @input="handleInput" />
+			<input class="input text-over" auto-focus type="text" v-model="value" @input="handleInput" />
 			<text class="icon clear" v-if="value!==''" @tap.stop.prevent="handleClear()">&#xe615;</text>
 		</view>
 
