@@ -2,6 +2,9 @@
 
 🎉🎉🎉 uni-app 微信小程序
 
+[android下载链接](https://vkceyugu.cdn.bspapp.com/VKCEYUGU-aliyun-vou8sjcjysto19584c/6f4ddd80-1e6b-11eb-8a36-ebb87efcf8c0.apk)
+[ios下载链接 -]()
+
 
 
  `1.小程序端`
@@ -56,5 +59,4 @@ KeyIdentifier [
 pageName `z.song.com`
 password `123456`
 
-[android下载链接](https://vkceyugu.cdn.bspapp.com/VKCEYUGU-aliyun-vou8sjcjysto19584c/6f4ddd80-1e6b-11eb-8a36-ebb87efcf8c0.apk)
 
